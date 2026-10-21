@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#14161c" />
+  <title>Bar-Kasse</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="config.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">🎺 Bar-Kasse</div>
+    <nav class="tabs">
+      <button data-view="kasse">Kassieren</button>
+      <button data-view="auswertung">Auswertung</button>
+      <button data-view="einstellungen">Einstellungen</button>
+    </nav>
+    <div class="top-right">
+      <div id="status" class="status connecting"><span class="dot"></span>Verbinde …</div>
+      <button id="btn-fullscreen" class="ghost" title="Vollbild ein/aus">⛶</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Kassieren -->
+    <section id="view-kasse" class="view">
+      <div id="menu" class="menu"></div>
+      <aside class="cart">
+        <div class="cart-head">
+          <h2>Bestellung</h2>
+          <span id="cart-count"></span>
+          <button id="btn-clear" class="ghost small-text" hidden>Leeren</button>
+        </div>
+        <ul id="cart-lines" class="cart-lines"></ul>
+        <div class="cart-foot">
+          <div class="subtotal"><span>Zwischentotal</span><strong id="cart-total">CHF 0.00</strong></div>
+          <button id="btn-checkout" class="primary big" disabled>Abrechnen</button>
+        </div>
+      </aside>
+
+      <div id="checkout" class="overlay" hidden>
+        <div class="checkout-card">
+          <div class="checkout-label">Total</div>
+          <div id="checkout-total" class="checkout-total">CHF 0.00</div>
+          <ul id="checkout-items" class="checkout-items"></ul>
+          <button id="btn-new-order" class="primary big">Neue Bestellung</button>
+          <button id="btn-undo-checkout" class="ghost">Zurück zur Bestellung (nicht abrechnen)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Auswertung -->
+    <section id="view-auswertung" class="view page" hidden>
+      <div class="page-head">
+        <div>
+          <h1>Auswertung</h1>
+          <p id="report-since" class="muted"></p>
+        </div>
+        <button id="btn-reset" class="danger">Zählung zurücksetzen</button>
+      </div>
+      <div id="report-summary" class="kpis"></div>
+      <table class="report">
+        <thead><tr><th>Getränk</th><th class="qty">Anzahl</th><th class="rev">Umsatz</th></tr></thead>
+      </table>
+      <table id="report-table" class="report body"></table>
+    </section>
+
+    <!-- Einstellungen -->
+    <section id="view-einstellungen" class="view page" hidden>
+      <h1>Einstellungen</h1>
+      <p class="muted">Änderungen werden sofort gespeichert und gelten auf allen Kassen.</p>
+      <h2>Getränke</h2>
+      <div id="settings-products"></div>
+      <h2>Kategorien</h2>
+      <div id="settings-categories" class="set-group"></div>
+      <button id="btn-add-category" class="add">+ Kategorie hinzufügen</button>
+    </section>
+  </main>
+
+  <div id="dialog" class="overlay" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+      <h2 id="dialog-title"></h2>
+      <p id="dialog-text"></p>
+      <div id="dialog-body"></div>
+      <div class="dialog-actions">
+        <button id="dialog-cancel" class="ghost">Abbrechen</button>
+        <button id="dialog-ok" class="primary">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

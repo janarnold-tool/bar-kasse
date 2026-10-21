@@ -1,0 +1,31 @@
+rules_version = '2';
+// Kein Login (gewünscht: Einstellungen ohne Passwort). Die Regeln prüfen
+// nur, dass die Daten die erwartete Form haben.
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function str(v, max) { return v is string && v.size() > 0 && v.size() <= max; }
+    function money(v) { return v is int && v >= 0 && v <= 1000000; }
+
+    match /products/{id} {
+      allow read: if true;
+      allow delete: if true;
+      allow write: if request.resource.data.keys().hasOnly(['name', 'price', 'category', 'icon', 'order'])
+        && str(request.resource.data.name, 80) && money(request.resource.data.price);
+    }
+    match /categories/{id} {
+      allow read, delete: if true;
+      allow write: if request.resource.data.keys().hasOnly(['name', 'color', 'order'])
+        && str(request.resource.data.name, 60);
+    }
+    match /state/current {
+      allow read, write: if true;
+    }
+    match /orders/{id} {
+      allow read, delete: if true;
+      allow create: if request.resource.data.keys().hasOnly(['epoch', 'items', 'total', 'device', 'createdAt'])
+        && request.resource.data.items is list && request.resource.data.items.size() <= 100
+        && money(request.resource.data.total);
+      allow update: if false;
+    }
+  }
+}
