@@ -1,5 +1,6 @@
 # Veröffentlicht die App bei jedem Push auf main auf Firebase Hosting.
-# Benötigt das Repository-Secret FIREBASE_SERVICE_ACCOUNT (siehe README).
+# Benötigt das Repository-Secret FIREBASE_SERVICE_ACCOUNT (siehe README);
+# fehlt es, wird nur gebaut und nichts veröffentlicht.
 name: Deploy
 on:
   push:
@@ -8,15 +9,20 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      FIREBASE_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm ci --omit=optional
       - run: node build.mjs
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - if: env.FIREBASE_SA == ''
+        run: echo "::notice::Secret FIREBASE_SERVICE_ACCOUNT fehlt, Veröffentlichung übersprungen."
+      - if: env.FIREBASE_SA != ''
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
+          projectId: bar-kasse-tracking-system
           channelId: live

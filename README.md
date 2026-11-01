@@ -39,7 +39,7 @@ der Gratis-Kontingente (50'000 Lesezugriffe und 20'000 Schreibzugriffe pro Tag).
    (sie sind nicht geheim, sie stehen in jeder Firebase-Webseite).
 5. Veröffentlichen, entweder
    - **automatisch über GitHub:** Im Repo unter *Settings → Secrets and variables → Actions*
-     die Variable `FIREBASE_PROJECT_ID` und das Secret `FIREBASE_SERVICE_ACCOUNT` anlegen
+     das Secret `FIREBASE_SERVICE_ACCOUNT` anlegen
      (Firebase-Konsole → Projekteinstellungen → Dienstkonten → «Neuen privaten Schlüssel
      generieren», Inhalt der JSON-Datei einfügen). Danach veröffentlicht jeder Push auf `main`.
    - **oder von Hand** auf einem Computer mit Node.js:
