@@ -18,5 +18,6 @@ await p.reload();
 await p.waitForSelector('.drink img');
 await p.waitForTimeout(800);
 for (const n of ['Spezli', 'Spezli', 'Coca-Cola', 'Hugo 3dl', 'Shotbrettli']) await p.locator('.drink', { hasText: n }).first().click();
+await p.waitForTimeout(600);
 await p.screenshot({ path: process.argv[2] || 'test/shots/logos.png' });
 await b.close(); srv.close();
