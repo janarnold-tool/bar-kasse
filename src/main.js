@@ -138,13 +138,20 @@ function renderStatus() {
 }
 
 // ---------- Kassieren ----------
+// Knöpfe in einem festen Spaltenraster; kleine Kategorien teilen sich eine Zeile,
+// damit das ganze Sortiment ohne Scrollen auf den Bildschirm passt.
+let menuCols = 0;
+const calcMenuCols = () => Math.max(3, Math.min(8, Math.floor(($('#menu').clientWidth - 22) / 150)));
+
 function renderMenu() {
   const el = $('#menu');
+  menuCols = calcMenuCols();
+  el.style.setProperty('--cols', menuCols);
   el.innerHTML = groups()
     .filter((g) => g.items.length)
     .map(
       (g) => `
-      <section class="cat" style="--cat:${esc(g.cat.color)}">
+      <section class="cat" style="--cat:${esc(g.cat.color)}; --span:${Math.min(g.items.length, menuCols)}">
         <h2>${esc(g.cat.name)}</h2>
         <div class="grid">
           ${g.items
@@ -464,6 +471,7 @@ function bindEvents() {
     if (d.view) {
       S.view = d.view;
       renderTabs();
+      if (S.view === 'kasse' && calcMenuCols() !== menuCols) renderMenu();
       if (S.view === 'auswertung') renderReport();
       if (S.view === 'einstellungen') renderSettings();
       return;
@@ -559,6 +567,10 @@ function bindEvents() {
   });
   document.addEventListener('focusout', () => {
     setTimeout(() => { if (settingsDirty) maybeRenderSettings(); }, 0);
+  });
+
+  window.addEventListener('resize', () => {
+    if (S.view === 'kasse' && calcMenuCols() !== menuCols) renderMenu();
   });
 
   const setOnline = () => { S.online = navigator.onLine; renderStatus(); };

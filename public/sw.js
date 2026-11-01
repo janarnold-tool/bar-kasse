@@ -1,6 +1,6 @@
 // Hält die App-Dateien im Cache, damit die Kasse auch ohne Internet startet.
 // Daten (Bestellungen) laufen nicht hierüber, sondern über den Firestore-Cache.
-const CACHE = 'bar-kasse-v1';
+const CACHE = 'bar-kasse-v2';
 const FILES = ['./', 'index.html', 'styles.css', 'app.js', 'config.js', 'manifest.webmanifest', 'icon.svg'];
 
 self.addEventListener('install', (e) => {
