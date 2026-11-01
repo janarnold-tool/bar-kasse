@@ -69,7 +69,11 @@ main { flex: 1; min-height: 0; position: relative; }
 }
 .drink:active { transform: scale(.96); background: color-mix(in srgb, var(--cat) 45%, var(--panel)); }
 .drink.in-cart { border-color: var(--cat); box-shadow: 0 0 0 2px color-mix(in srgb, var(--cat) 40%, transparent); }
-.drink .icon { font-size: clamp(26px, 4.2vh, 40px); line-height: 1; }
+.drink .icon { font-size: clamp(26px, 4.2vh, 40px); line-height: 1; display: flex; align-items: center; justify-content: center; }
+.drink .logo { height: clamp(34px, 5.6vh, 54px); max-width: 92%; object-fit: contain; }
+.icon .logo { pointer-events: none; }
+.cart-lines .logo, .checkout-items .logo, .report .logo { height: 24px; width: 28px; object-fit: contain; vertical-align: middle; }
+.icon-pick .logo, .picker .logo { height: 34px; max-width: 46px; object-fit: contain; }
 .drink .name { font-size: 15px; font-weight: 600; line-height: 1.2; }
 .drink .price { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .drink .badge {

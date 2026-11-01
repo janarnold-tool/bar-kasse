@@ -16,6 +16,15 @@ function parsePrice(text) {
   if (!/^\d+(\.\d{1,2})?$/.test(t)) return null;
   return Math.round(parseFloat(t) * 100);
 }
+// Ein Symbol ist entweder ein Emoji oder ein Hersteller-Logo als «logo:<datei>» (liegt in public/logos/).
+// LOGOS wird beim Bauen aus dem Ordner public/logos/ eingesetzt.
+const LOGO_RE = /^logo:([a-z0-9][a-z0-9._-]*\.(png|svg|webp|jpg))$/;
+function iconHtml(icon, fallback = '') {
+  const m = LOGO_RE.exec(icon || '');
+  if (m) return `<img class="logo" src="logos/${m[1]}" alt="" draggable="false" />`;
+  return esc(icon || fallback);
+}
+
 const byOrder = (a, b) => (a.order ?? 0) - (b.order ?? 0) || String(a.name).localeCompare(b.name, 'de-CH');
 const toDate = (v) => (v?.toDate ? v.toDate() : typeof v === 'number' ? new Date(v) : null);
 
@@ -142,7 +151,7 @@ function renderMenu() {
             .map(
               (p) => `
             <button class="drink" data-add="${esc(p.id)}">
-              <span class="icon">${esc(p.icon || '🥤')}</span>
+              <span class="icon">${iconHtml(p.icon, '🥤')}</span>
               <span class="name">${esc(p.name)}</span>
               <span class="price">${chf(p.price)}</span>
               <span class="badge" data-badge="${esc(p.id)}"></span>
@@ -172,7 +181,7 @@ function renderCart() {
           (l) => `
       <li style="--cat:${esc(categoryById(l.product.category)?.color || '#5b6474')}">
         <span class="qty">${l.qty}×</span>
-        <span class="icon">${esc(l.product.icon || '')}</span>
+        <span class="icon">${iconHtml(l.product.icon)}</span>
         <span class="name">${esc(l.product.name)}</span>
         <span class="sum">${chf(l.product.price * l.qty)}</span>
         <button class="minus" data-minus="${esc(l.product.id)}" aria-label="Eins weniger">−</button>
@@ -220,7 +229,7 @@ function renderCheckout() {
   const { total, items } = S.checkout;
   $('#checkout-total').textContent = chf(total);
   $('#checkout-items').innerHTML = items
-    .map((i) => `<li><span>${i.qty}× ${esc(i.icon)} ${esc(i.name)}</span><span>${chf(i.price * i.qty)}</span></li>`)
+    .map((i) => `<li><span>${i.qty}× <span class="icon">${iconHtml(i.icon)}</span> ${esc(i.name)}</span><span>${chf(i.price * i.qty)}</span></li>`)
     .join('');
   el.hidden = false;
   $('#btn-new-order').focus();
@@ -288,7 +297,7 @@ function renderReport() {
         .map(
           (i) => `
         <tr class="${i.qty ? '' : 'zero'}">
-          <td class="name"><span class="icon">${esc(i.icon || '')}</span> ${esc(i.name)}</td>
+          <td class="name"><span class="icon">${iconHtml(i.icon)}</span> ${esc(i.name)}</td>
           <td class="qty">${i.qty}</td>
           <td class="rev">${chf(i.revenue)}</td>
         </tr>`
@@ -328,7 +337,7 @@ function renderSettings() {
         .map(
           (p, idx) => `
         <div class="set-row" data-product="${esc(p.id)}">
-          <button class="icon-pick" data-icon-for="${esc(p.id)}" title="Symbol wählen">${esc(p.icon || '🥤')}</button>
+          <button class="icon-pick" data-icon-for="${esc(p.id)}" title="Logo oder Symbol wählen">${iconHtml(p.icon, '🥤')}</button>
           <input class="f-name" value="${esc(p.name)}" aria-label="Name" />
           <label class="f-price-wrap">CHF <input class="f-price" value="${priceInput(p.price)}" inputmode="decimal" aria-label="Preis" /></label>
           <select class="f-cat" aria-label="Kategorie">${catOptions(p.category)}</select>
@@ -503,7 +512,8 @@ function bindEvents() {
     }
     if (d.iconFor) {
       const id = d.iconFor;
-      return pickerDialog('Symbol wählen', ICON_CHOICES, (c) => c, (icon) => updateProduct(id, { icon }));
+      const choices = [...LOGOS.map((f) => `logo:${f}`), ...ICON_CHOICES];
+      return pickerDialog('Logo oder Symbol wählen', choices, (c) => iconHtml(c), (icon) => updateProduct(id, { icon }));
     }
     if (d.colorFor) {
       const id = d.colorFor;
